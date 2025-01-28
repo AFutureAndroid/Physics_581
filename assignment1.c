@@ -17,6 +17,7 @@ int main(void){
 
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 void chebyshev_ten(int m, double *grid, double *values, double *first, double *second, double step){
     for (int i=0; i<m; i++) {
@@ -28,13 +29,37 @@ void chebyshev_ten(int m, double *grid, double *values, double *first, double *s
     }
 }
 
-void fd_method(int m, double *grid, double *values, double *first, double *second, double step){
-    first[0] = (values[1] - values[0]) / step;
-    first[m-1] = (values[m - 1] - values[m - 2]) / step;
-
-    for (int i = 1; i < m - 1; i++) {
-        first[i] = (values[i + 1] - values[i - 1]) / (2 * step);
+void fd_method(int m, double *grid, double *values, double *first_fdm, double *second_fdm, double step){
+    // First derivative
+    first_fdm[0] = (values[1] - values[0]) / step;
+    first_fdm[m-1] = (values[m - 1] - values[m - 2]) / step;
+    for (int i=1; i < m - 1; i++) {
+        first_fdm[i] = (values[i + 1] - values[i - 1]) / (2 * step);
     }
+
+    // Second derivative
+    second_fdm[0] = (values[2] + values[0] - 2*values[1]) / (step*step);
+    second_fdm[m-1] = (values[m-1] + values[m-3] - 2*values[m-2]) / (step*step);
+    for(int i=1; i < m-1; i++) {
+        second_fdm[i] = (values[i+1] + values[i-1] - 2*values[i]) / (step*step);
+    }
+}
+
+
+void errors(int m, double *first, double *second, double *first_fdm, double *second_fdm, double first_err, double second_err){
+    first_err = 0.0;
+    second_err = 0.0;
+
+    for (int i = 0; i < m; i++) {
+        first_err += fabs(first[i] - first_fdm[i]);
+        printf("%f|", first[i]);
+        printf("%f|", first_fdm[i]);
+        printf("\n");
+        second_err += fabs(second[i] - second_fdm[i]);
+    }
+
+    first_err = first_err / m;
+    second_err = second_err / m;
 }
 
 
@@ -63,12 +88,20 @@ int main() {
     }
 
     // Approximate first and second derivatives from listed data
-    fd_method(m, grid, values, first, second, step);
+    double *first_fdm = first;
+    double *second_fdm = second;
+    fd_method(m, grid, values, first_fdm, second_fdm, step);
     printf("x\t\t\tT10(x)\t\tT'10(x)\t\tT''10(x)\n");
     for (int i = 0; i < m; i++) {
-        printf("%f\t%f\t%f\t%f\n", grid[i], values[i], first[i], second[i]);
+        printf("%f\t%f\t%f\t%f\n", grid[i], values[i], first_fdm[i], second_fdm[i]);
     }
 
+    // Error calculation
+    double first_err, second_err;
+    errors(m, first, second, first_fdm, second_fdm, first_err, second_err);
+    
+    printf("\nTotal Error in T'10(x): %f\n", first_err);
+    printf("Total Error in T''10(x): %f\n", second_err);
 
     return 0;
 }
