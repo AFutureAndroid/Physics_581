@@ -18,8 +18,7 @@ int main(void){
 #include <stdio.h>
 #include <math.h>
 
-void chebyshev_ten(int m, double *grid, double *values, double *first, double *second){
-    double step = 2.0 / (m-1);
+void chebyshev_ten(int m, double *grid, double *values, double *first, double *second, double step){
     for (int i=0; i<m; i++) {
         grid[i] = -1.0 + i*step;
         double j = grid[i];
@@ -42,30 +41,37 @@ void fd_method(int m, double *grid, double *values, double *first, double *secon
 int main() {
     int m = 10; // Number of points
     double grid[m], values[m], first[m], second[m];
+    double step = 2.0 / (m-1);
 
     // Compute the Chebyshev polynomial values on the grid
-    chebyshev_ten(m, grid, values, first, second);
+    chebyshev_ten(m, grid, values, first, second, step);
 
     // Print the grid points and corresponding T10(x) values
-    printf("x\t\tT10(x)\n");
+    printf("x\t\t\tT10(x)\n");
     for (int i = 0; i < m; i++) {
         printf("%f\t%f\n", grid[i], values[i]);
     }
 
-    printf("x\t\tT'10(x)\n");
+    printf("x\t\t\tT'10(x)\n");
     for (int i = 0; i < m; i++) {
         printf("%f\t%f\n", grid[i], first[i]);
     }
 
-    printf("x\t\tT''10(x)\n");
+    printf("x\t\t\tT''10(x)\n");
     for (int i = 0; i < m; i++) {
         printf("%f\t%f\n", grid[i], second[i]);
     }
+
+    // Approximate first and second derivatives from listed data
+    fd_method(m, grid, values, first, second, step);
+    printf("x\t\t\tT10(x)\t\tT'10(x)\t\tT''10(x)\n");
+    for (int i = 0; i < m; i++) {
+        printf("%f\t%f\t%f\t%f\n", grid[i], values[i], first[i], second[i]);
+    }
+
+
     return 0;
 }
-
-
-// Approximate first and second derivatives from listed data
 
 
 
