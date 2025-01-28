@@ -11,9 +11,9 @@ int main(void){
 
     printf("%d\n", xvals[2]);
     return 0;
-
 }
 **/
+
 
 #include <stdio.h>
 #include <math.h>
@@ -22,9 +22,19 @@ void chebyshev_ten(int m, double *grid, double *values, double *first, double *s
     double step = 2.0 / (m-1);
     for (int i=0; i<m; i++) {
         grid[i] = -1.0 + i*step;
+        double j = grid[i];
         values[i] = cos(10*acos(grid[i]));
-        first[i] = (100*i) - (1600*i*i*i) + (6720*pow(i,5)) - (10240*pow(i,7)) + (5120*pow(i,9));
-        second[i] = 100 - 4800*i*i + 33600*pow(i,4) - 71680*pow(i,6) + 46080*pow(i,8);
+        first[i] = (100*j) - (1600*j*j*j) + (6720*pow(j,5)) - (10240*pow(j,7)) + (5120*pow(j,9));
+        second[i] = 100 - 4800*j*j + 33600*pow(j,4) - 71680*pow(j,6) + 46080*pow(j,8);
+    }
+}
+
+void fd_method(int m, double *grid, double *values, double *first, double *second, double step){
+    first[0] = (values[1] - values[0]) / step;
+    first[m-1] = (values[m - 1] - values[m - 2]) / step;
+
+    for (int i = 1; i < m - 1; i++) {
+        first[i] = (values[i + 1] - values[i - 1]) / (2 * step);
     }
 }
 
@@ -53,5 +63,9 @@ int main() {
     }
     return 0;
 }
+
+
+// Approximate first and second derivatives from listed data
+
 
 
