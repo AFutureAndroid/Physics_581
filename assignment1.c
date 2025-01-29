@@ -1,32 +1,22 @@
 // Question 3 
 //We start by storing the n=10 Chebyshev polynomial
 
-/** 
-#include <stdio.h>
-
-int main(void){
-    int x = 1;
-    int T = -1 + 50*x*x - 400*x*x*x*x + 1120*x*x*x*x*x*x - 1280*x*x*x*x*x*x*x*x + 512*x*x*x*x*x*x*x*x*x*x;
-    int xvals[] = {-1, -0.5, 0, 0.5, 1};
-
-    printf("%d\n", xvals[2]);
-    return 0;
-}
-**/
-
 
 #include <stdio.h>
 #include <math.h>
 
-/*  Fuction for storing the Chebyshev polynomial for n = 10
+/*  Function for storing the Chebyshev polynomial for n = 10
     As well as the first and second derivatives
     Stored on a grid of m points
 */
 void chebyshev_ten(int m, double *grid, double *values, double *first, double *second, double step){
+    //this for loop iterates through the grid coordinates
     for (int i=0; i<m; i++) {
+        // values for the grid (x-values)
         grid[i] = -1.0 + i*step;
         double j = grid[i];
         values[i] = cos(10*acos(grid[i]));
+        // writing out the exponents is more efficient than the pow() function
         first[i] = (100*j) - (1600*j*j*j) + (6720*pow(j,5)) - (10240*pow(j,7)) + (5120*pow(j,9));
         second[i] = 100 - 4800*j*j + 33600*pow(j,4) - 71680*pow(j,6) + 46080*pow(j,8);
     }
@@ -57,7 +47,6 @@ void errors(int m, double *first, double *second, double *first_fdm, double *sec
 
     for (int i = 0; i < m; i++) {
         first_err += fabs(first[i] - first_fdm[i]);
-        //printf("Current Error %f n", first_err);
         second_err += fabs(second[i] - second_fdm[i]);
     }
 
@@ -71,7 +60,7 @@ void errors(int m, double *first, double *second, double *first_fdm, double *sec
 
 
 int main() {
-    int m = 10; // Number of points
+    int m = 10; // Number of points in the grid
     double grid[m], values[m], first[m], second[m];
     double step = 2.0 / (m-1);
 
@@ -83,12 +72,10 @@ int main() {
     for (int i = 0; i < m; i++) {
         printf("%f\t%f\n", grid[i], values[i]);
     }
-
     printf("x\t\t\tT'10(x)\n");
     for (int i = 0; i < m; i++) {
         printf("%f\t%f\n", grid[i], first[i]);
     }
-
     printf("x\t\t\tT''10(x)\n");
     for (int i = 0; i < m; i++) {
         printf("%f\t%f\n", grid[i], second[i]);
@@ -109,19 +96,6 @@ int main() {
 
     //printf("\nTotal Average Error in T'10(x): %f\n", first_err);
     //printf("Total Average Error in T''10(x): %f\n", second_err);
-
-/*
-    // Attempting to tabulate for a number of m values
-    // It is not going well
-    int mlist[] = {2, 4, 10, 50, 100}; //, 500, 1000, 2000, 50000, 10000};
-    
-    int howmany = sizeof(mlist);
-    for(int i = 0; i < howmany; i++){
-        chebyshev_ten(mlist[i], grid, values, first, second, step);
-        fd_method(mlist[i], grid, values, first_fdm, second_fdm, step);
-        errors(mlist[i], first, second, first_fdm, second_fdm, first_err, second_err);
-    }
-*/
 
     return 0;
 }
