@@ -1,7 +1,6 @@
 // Question 3 
 //We start by storing the n=10 Chebyshev polynomial
 
-
 #include <stdio.h>
 #include <math.h>
 
