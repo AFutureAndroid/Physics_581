@@ -10,3 +10,7 @@ void compute_weights(int n, double x[], double w[]) {
         }
     }
 }
+
+void main() {
+    
+}
